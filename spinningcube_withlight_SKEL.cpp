@@ -27,6 +27,7 @@ void getNormals(GLfloat * vertexNormals,const GLfloat vertexPositions[]);
 GLuint shader_program = 0; // shader program to set render pipeline
 GLuint cubeVAO = 0; // Vertext Array Object to set input data
 GLuint texture = 0; 
+GLuint texture2 = 0; 
 GLint model_location, view_location, proj_location, normal_location; // Uniforms for transformation matrices
 GLint light_position_location, light_ambient_location, light_diffuse_location, light_specular_location; // Uniforms for light data
 GLint material_ambient_location, material_diffuse_location, material_specular_location, material_shininess_location; // Uniforms for material matrices
@@ -292,6 +293,7 @@ int main() {
 
   // Create texture object
   glGenTextures(1, &texture);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
 
   // Set the texture wrapping/filtering options (on the currently bound texture object)
@@ -319,6 +321,28 @@ int main() {
   // Free image once texture is generated
   stbi_image_free(data);
 
+  glGenTextures(1, &texture2);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, texture2);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+  unsigned char *data2 = stbi_load("container2_specular.jpg", &width, &height, &nrChannels, 0);
+  // Image from http://www.flickr.com/photos/seier/4364156221
+  // CC-BY-SA 2.0
+  if (data2) {
+    // Generate texture from image
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  } else {
+    printf("Failed to load texture\n");
+  }
+
+  // Free image once texture is generated
+  stbi_image_free(data2);
 
   // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
   //GLuint lightCubeVAO = 0;
@@ -396,7 +420,10 @@ void render(double currentTime, GLuint *cubeVAO) {
   glUseProgram(shader_program);
   glBindVertexArray(*cubeVAO);
 
-  glBindTexture(GL_TEXTURE_2D, texture);
+  //glActiveTexture(GL_TEXTURE0);
+  //glBindTexture(GL_TEXTURE_2D, texture);
+  //glActiveTexture(GL_TEXTURE1);
+  //glBindTexture(GL_TEXTURE_2D, texture2);
 
   glm::mat4 model_matrix, view_matrix, proj_matrix;
   glm::mat3 normal_matrix;
