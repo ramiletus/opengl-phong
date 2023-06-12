@@ -37,7 +37,9 @@ const char *vertexFileName = "spinningcube_withlight_vs_SKEL.glsl";
 const char *fragmentFileName = "spinningcube_withlight_fs_SKEL.glsl";
 
 // Camera
-glm::vec3 camera_pos(0.0f, 0.0f, 2.0f);
+glm::vec3 camera_pos(0.0f, 0.0f, 6.0f);
+glm::vec3 camera1_pos(0.0f, 0.0f, 6.0f);
+glm::vec3 camera2_pos(1.0f, 1.0f, 12.0f);
 
 // Lighting
 glm::vec3 light_pos(0.0f, 0.0f, 1.0f);
@@ -399,7 +401,16 @@ int main() {
   while(!glfwWindowShouldClose(window)) {
 
     processInput(window);
-
+  //Seleccion de camara
+    if(glfwGetKey(window, GLFW_KEY_SPACE) ==GLFW_PRESS){
+    
+    	if(camera_pos == camera2_pos){
+      		camera_pos = camera1_pos;
+    	}
+    	else{
+     		camera_pos = camera2_pos;
+    	}
+    }
     //render(glfwGetTime(), &cubeVAO, &lightCubeVAO);
     render(glfwGetTime(), &cubeVAO);
 
